@@ -2,13 +2,10 @@ from github import Github
 
 # Replace these variables with your own information
 you_know_what = 'example'
-REPO_NAME = 'https://github.com/reedwrogers/Pen-To-Pi'
-FILE_PATH = 'blank.txt'
-COMMIT_MESSAGE = 'Add a blank text file'
-
-# Create a blank text file
-with open(FILE_PATH, 'w') as file:
-    pass
+REPO_NAME = 'reedwrogers/Pen-To-Pi'
+LOCAL_FILE_PATH = '/home/reedwr/Desktop/blank.txt'
+REPO_FILE_PATH = 'Light.py'  # The path where the file should be added in the repository
+COMMIT_MESSAGE = 'Add Light.py file'
 
 # Authenticate using an access token
 g = Github(you_know_what)
@@ -17,10 +14,10 @@ g = Github(you_know_what)
 repo = g.get_repo(REPO_NAME)
 
 # Read the content of the file
-with open(FILE_PATH, 'r') as file:
+with open(LOCAL_FILE_PATH, 'r') as file:
     content = file.read()
 
 # Upload the file to the repository
-repo.create_file(FILE_PATH, COMMIT_MESSAGE, content)
+repo.create_file(REPO_FILE_PATH, COMMIT_MESSAGE, content, branch="main")
 
-print(f"{FILE_PATH} has been uploaded to {REPO_NAME}")
+print(f"{LOCAL_FILE_PATH} has been uploaded to {REPO_NAME} at {REPO_FILE_PATH}")
