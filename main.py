@@ -3,9 +3,9 @@ from github import Github
 # Replace these variables with your own information
 you_know_what = 'example'
 REPO_NAME = 'reedwrogers/Pen-To-Pi'
-LOCAL_FILE_PATH = '/home/reedwr/Desktop/blank.txt'
-REPO_FILE_PATH = 'Light.py'  # The path where the file should be added in the repository
-COMMIT_MESSAGE = 'Add Light.py file'
+LOCAL_FILE_PATH = '/home/reedwr/Images'
+REPO_FILE_PATH = 'Notes/'  # name of resulting file
+COMMIT_MESSAGE = 'Added in file'
 
 # Authenticate using an access token
 g = Github(you_know_what)
