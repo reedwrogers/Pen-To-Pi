@@ -11,8 +11,6 @@ LOCAL_FILE_PATH = f'/home/reedwr/Pictures/Notes/{image}'
 REPO_FILE_PATH = f'Notes/{image}'  # name of resulting file
 COMMIT_MESSAGE = 'Added in Image'
 
-
-
 # Authenticate using an access token
 g = Github(you_know_what)
 
