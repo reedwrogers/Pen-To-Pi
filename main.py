@@ -5,7 +5,7 @@ from photo import *
 image = grab_photo()
 
 # Replace these variables with your own information
-you_know_what = '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'
+you_know_what = 'example'
 REPO_NAME = 'reedwrogers/Pen-To-Pi'
 LOCAL_FILE_PATH = f'/home/reedwr/Pictures/Notes/{image}'
 REPO_FILE_PATH = f'Notes/{image}'  # name of resulting file
