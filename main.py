@@ -5,10 +5,10 @@ from photo import *
 image = grab_photo()
 
 # Replace these variables with your own information
-you_know_what = 'example'
+you_know_what = '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'
 REPO_NAME = 'reedwrogers/Pen-To-Pi'
-LOCAL_FILE_PATH = ('/home/reedwr/Pictures',image)
-REPO_FILE_PATH = ('Notes/',image)  # name of resulting file
+LOCAL_FILE_PATH = f'/home/reedwr/Pictures/Notes/{image}'
+REPO_FILE_PATH = f'Notes/{image}'  # name of resulting file
 COMMIT_MESSAGE = 'Added in Image'
 
 
@@ -20,7 +20,7 @@ g = Github(you_know_what)
 repo = g.get_repo(REPO_NAME)
 
 # Read the content of the file
-with open(LOCAL_FILE_PATH, 'r') as file:
+with open(LOCAL_FILE_PATH, 'rb') as file:
     content = file.read()
 
 # Upload the file to the repository
