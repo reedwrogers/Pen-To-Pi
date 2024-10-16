@@ -1,4 +1,5 @@
 from github import Github
+from photo import *
 
 # Replace these variables with your own information
 you_know_what = 'example'
