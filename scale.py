@@ -1,12 +1,18 @@
 import cv2
 import os
+import numpy as np
+
+#-----------
+# Maybe a better way to do this would be to use an item detection model that can detect a piece of paper.. or a whiteboard.. 
+# ----------
 
 # Capture image and convert to grayscale
 def scale(img_path):
 
     file_name, file_extension = os.path.splitext(img_path)
+    
+    image = cv2.imread(f'/home/reedwr/Pictures/Notes/{img_path}')
 
-    image = cv2.imread(img_path) 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # Apply edge detection
@@ -37,6 +43,10 @@ def scale(img_path):
     standard_size = (800, 600)  # Choose your preferred dimensions
     resized = cv2.resize(warped, standard_size)
 
-    new_img_path = f"{file_name}_scaled{file_extension}"
+    new_img_path = f"/home/reedwr/Pictures/Notes/{file_name}_scaled{file_extension}"
 
     cv2.imwrite(new_img_path, resized)
+    
+    new_img_path = f"home/reedwr/Pictures/Notes/{file_name}_scaled{file_extension}"
+
+    return new_img_path, f'{file_name}_scaled{file_extension}', file_name
