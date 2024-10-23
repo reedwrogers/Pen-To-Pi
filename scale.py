@@ -1,52 +1,71 @@
-import cv2
-import os
+from photo import *
+import skimage.color
+import skimage.io
 import numpy as np
+import matplotlib.pyplot as plt
 
-#-----------
-# Maybe a better way to do this would be to use an item detection model that can detect a piece of paper.. or a whiteboard..
-# ----------
+def locate_white_region(image_path):
+    try:
+        # Read the image
+        image_rgb = skimage.io.imread(image_path)
 
-# Capture image and convert to grayscale
-def scale(img_path):
+        # Convert the image to HSV color space
+        image_hsv = skimage.color.rgb2hsv(image_rgb)
 
-    file_name, file_extension = os.path.splitext(img_path)
-    
-    image = cv2.imread(f'/home/reedwr/Pictures/Notes/{img_path}')
+        # Threshold based on the V (brightness) channel
+        white_threshold = 0.85
+        white_mask = image_hsv[:, :, 2] > white_threshold
 
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        # Find the bounding box of the white region
+        mask_x = white_mask.max(axis=0)
+        mask_y = white_mask.max(axis=1)
+        indices_x = mask_x.nonzero()[0]
+        indices_y = mask_y.nonzero()[0]
 
-    # Apply edge detection
-    edges = cv2.Canny(gray, 50, 150)
+        # If no white region is found, return an error
+        if indices_x.size == 0 or indices_y.size == 0:
+            print("No white region detected in the image.")
+            return None, None
 
-    # Find contours to get the largest rectangle
-    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # Get the bounding box coordinates
+        minx, maxx = int(indices_x[0]), int(indices_x[-1])
+        miny, maxy = int(indices_y[0]), int(indices_y[-1])
 
-    # Iterate over the detected contours to find one that is approximately rectangular and large enough to be the notebook
-    page_contour = None
-    for contour in contours:
-        epsilon = 0.02 * cv2.arcLength(contour, True)
-        approx = cv2.approxPolyDP(contour, epsilon, True)
-        if len(approx) == 4:  # Rectangle has 4 sides
-            page_contour = approx
-            break
+        # Crop the original image to the detected white region
+        cropped_result = image_rgb[miny:maxy, minx:maxx, :]
 
-    # If a rectangle contour is found, apply a perspective transformation to warp the image so that the page appears flat and scaled to a consistent size
-    if page_contour is not None:
-        pts = page_contour.reshape(4, 2)
-        # Reorder points for perspective transform
-        rect = cv2.boundingRect(pts)
-        dst_pts = np.array([[0, 0], [rect[2], 0], [rect[2], rect[3]], [0, rect[3]]], dtype="float32")
-        M = cv2.getPerspectiveTransform(pts.astype("float32"), dst_pts)
-        warped = cv2.warpPerspective(image, M, (rect[2], rect[3]))
+        # Display the results using matplotlib
+        plt.figure(figsize=(10, 5))
+        plt.subplot(1, 2, 1)
+        plt.imshow(image_rgb)
+        plt.title("Original Image")
+        plt.axis('off')
 
-    # Ensure the transformed image is always resized to a standard resolution
-    standard_size = (800, 600)  # Choose your preferred dimensions
-    resized = cv2.resize(warped, standard_size)
+        plt.subplot(1, 2, 2)
+        plt.imshow(cropped_result)
+        plt.title("Cropped to White Region")
+        plt.axis('off')
 
-    new_img_path = f"/home/reedwr/Pictures/Notes/{file_name}_scaled{file_extension}"
+        plt.show()
 
-    cv2.imwrite(new_img_path, resized)
-    
-    new_img_path = f"home/reedwr/Pictures/Notes/{file_name}_scaled{file_extension}"
+        return (minx, maxx, miny, maxy), cropped_result
 
-    return new_img_path, f'{file_name}_scaled{file_extension}', file_name
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None, None
+
+# Example usage
+# _,img = grab_photo()
+image_path = '/home/reedwr/Pictures/Notes/20241023_051715.jpg'
+bounding_box, cropped_image = locate_white_region(image_path)
+
+if bounding_box:
+    minx, maxx, miny, maxy = bounding_box
+    print(f"White region bounding box: minx={minx}, maxx={maxx}, miny={miny}, maxy={maxy}")
+
+# this needs to be fixed in a few ways:
+# 1 - needs to 'return new_img_path, f'{file_name}_scaled{file_extension}', file_name' in that order
+# 2- need to take away the little graphic that currently appears
+# 3 - straighten the image
+# 4 - allow grab_photo() to be called without error on threading
+# 5 - fix up definition name and how it is called in main
