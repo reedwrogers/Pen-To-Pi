@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 #-----------
-# Maybe a better way to do this would be to use an item detection model that can detect a piece of paper.. or a whiteboard.. 
+# Maybe a better way to do this would be to use an item detection model that can detect a piece of paper.. or a whiteboard..
 # ----------
 
 # Capture image and convert to grayscale
