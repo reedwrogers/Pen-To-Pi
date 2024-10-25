@@ -1,51 +1,31 @@
-import tempfile
-
-import cv2
+from skimage import io, color, filters, exposure, img_as_ubyte
 import numpy as np
-from PIL import Image
 
-IMAGE_SIZE = 1800
-BINARY_THREHOLD = 180
-
-def process_image_for_ocr(file_path):
-    note_name_with_extension = os.path.basename(file_path)
-    note_name, note_ext = note_name_with_extension.rsplit('.', 1)
-    temp_filename = set_image_dpi(file_path)
-    im_new = remove_noise_and_smooth(temp_filename)
-    cv2.imwrite(f'/home/reedwr/Pictures/Notes/{note_name}_processed.{note_ext}',im_new)
-    path = f'/home/reedwr/Pictures/Notes/{note_name}_processed.{note_ext}'
-    return path
-
-def set_image_dpi(file_path):
-    im = Image.open(file_path)
-    length_x, width_y = im.size
-    factor = max(1, int(IMAGE_SIZE / length_x))
-    size = factor * length_x, factor * width_y
-    # size = (1800, 1800)
-    im_resized = im.resize(size, Image.ANTIALIAS)
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.jpg')
-    temp_filename = temp_file.name
-    im_resized.save(temp_filename, dpi=(300, 300))
-    return temp_filename
-
-def image_smoothening(img):
-    ret1, th1 = cv2.threshold(img, BINARY_THREHOLD, 255, cv2.THRESH_BINARY)
-    ret2, th2 = cv2.threshold(th1, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    blur = cv2.GaussianBlur(th2, (1, 1), 0)
-    ret3, th3 = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    return th3
-
-def remove_noise_and_smooth(file_name):
-    img = cv2.imread(file_name, 0)
-    filtered = cv2.adaptiveThreshold(img.astype(np.uint8), 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 41, 3)
-    kernel = np.ones((1, 1), np.uint8)
-    opening = cv2.morphologyEx(filtered, cv2.MORPH_OPEN, kernel)
-    closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel)
+def preprocess_image_for_ocr(image_path):
+    # Load the image
+    image = io.imread(image_path)
     
-    # Smoothen the original image (assuming image_smoothening is defined somewhere)
-    img = image_smoothening(img)
+    # Convert to grayscale
+    gray_image = color.rgb2gray(image)
     
-    # Combine the smoothened image with the morphologically closed image
-    or_image = cv2.bitwise_or(img, closing)
+    # Apply Gaussian filter to reduce noise
+    blurred_image = filters.gaussian(gray_image, sigma=1.0)
     
-    return or_image
+    # Enhance contrast using adaptive histogram equalization
+    enhanced_image = exposure.equalize_adapthist(blurred_image, clip_limit=0.03)
+    
+    # Further improve contrast by stretching the intensity values
+    # Stretch the intensity values to cover the full range (0-1)
+    contrast_stretched_image = exposure.rescale_intensity(enhanced_image, in_range=(0, 1), out_range=(0, 1))
+    
+    # Convert the image to 8-bit unsigned integer type
+    contrast_stretched_image = img_as_ubyte(contrast_stretched_image)
+    
+    # Apply a threshold to binarize the image
+    threshold = filters.threshold_otsu(contrast_stretched_image)
+    binary_image = contrast_stretched_image > threshold
+    
+    # Invert the image so text appears white on black (if needed)
+    binary_image = np.invert(binary_image)
+    
+    return binary_image

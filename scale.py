@@ -1,9 +1,9 @@
 import skimage.color
 import skimage.io
 import numpy as np
-import cv2
 from photo import *
 import os
+from process import *
 
 def scale(image_path):
     try:        
@@ -35,11 +35,20 @@ def scale(image_path):
         # Crop the original image to the detected white region
         cropped_result = image_rgb[miny:maxy, minx:maxx, :]
         
+        # Preprocess
+        # preprocess_image_for_ocr(image)
+        
+        # cropped_result = preprocess_image_for_ocr(cropped_result)
+                
         # Save the processed image
         scaled_file_name_with_extension = os.path.basename(image_path)
         scaled_file_name, scaled_file_extension = scaled_file_name_with_extension.rsplit('.', 1)        
         scaled_output_path = f"/home/reedwr/Pictures/Notes/{scaled_file_name}_scaled.{scaled_file_extension}"
         skimage.io.imsave(scaled_output_path, cropped_result)
+        
+        processed_image = preprocess_image_for_ocr(f"/home/reedwr/Pictures/Notes/{scaled_file_name}_scaled.{scaled_file_extension}")
+        skimage.io.imsave(scaled_output_path,processed_image)
+
         
         return scaled_output_path
 

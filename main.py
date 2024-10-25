@@ -1,12 +1,11 @@
 from github import Github
 from photo import *
 from scale import *
-from process import *
 import os
 
 # Get the image we are sending the repo
 image_original = grab_photo()
-image_scaled = scale(process_image_for_ocr(image_original))
+image_scaled = scale(image_original)
 
 # Replace these variables with your own information
 you_know_what = 'example'

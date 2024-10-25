@@ -1,15 +1,27 @@
-from picamera2 import Picamera2
+import subprocess
 from datetime import datetime
+import os
 
 def grab_photo():
     try:
+        # Get the current time for the filename
         current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-        image_filename = f"{current_time}.jpg"
+        image_filename = f"/home/reedwr/Pictures/Notes/{current_time}.jpg"
 
-        picam2 = Picamera2()
-        # Start and capture the image
-        picam2.start_and_capture_file(f'/home/reedwr/Pictures/Notes/{image_filename}')
-    finally:
-        # Clean up to release the camera resource
-        picam2.close()
+        # Ensure the output directory exists
+        os.makedirs(os.path.dirname(image_filename), exist_ok=True)
+
+        # Capture the image using libcamera-still
+        subprocess.run([
+            "libcamera-still",
+            "-o", image_filename,  # Output file path
+            "--timeout", "2000",   # Wait for 2 seconds before capturing
+            "--nopreview"          # Disable preview to avoid display issues
+        ], check=True)
+
+        print(f"Image captured and saved to {image_filename}")
         return image_filename
+
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred while capturing the image: {e}")
+        return None
