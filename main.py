@@ -1,18 +1,31 @@
 from github import Github
 from photo import *
 from scale import *
+from process import *
+import os
 
 # Get the image we are sending the repo
-image_original,original_path = grab_photo()
-image_scaled = scale(image_original)
+image_original = grab_photo()
+image_scaled = scale(process_image_for_ocr(image_original))
 
 # Replace these variables with your own information
 you_know_what = 'example'
 REPO_NAME = 'reedwrogers/Pen-To-Pi'
-LOCAL_FILE_PATH, NOTE_NAME_EXT, NOTE_NAME = image_scaled
-REPO_FILE_PATH = f'Notes/{NOTE_NAME}/{NOTE_NAME_EXT}'  # name of resulting file
-REPO_FILE_PATH_ORIGINAL = f'Notes/{NOTE_NAME}/{image_original}'
-COMMIT_MESSAGE = f'Added original and scaled images for {NOTE_NAME}'
+
+# Remove the / at the start of the file because GitHub won't take it
+if image_original.startswith('/'):
+    image_original = image_original[1:]
+if image_scaled.startswith('/'):
+    image_scaled = image_scaled[1:]
+
+# Extract the name and extension to use
+note_name_with_extension = os.path.basename(image_original)
+note_name, note_ext = note_name_with_extension.rsplit('.', 1)
+
+repo_path_original = f'Notes/{note_name}/{note_name}.{note_ext}'
+repo_path_scaled = f'Notes/{note_name}/{note_name}_scaled.{note_ext}'
+
+commit_message = f'Added original and scaled images for {note_name}.{note_ext}'
 
 # Authenticate using an access token
 g = Github(you_know_what)
@@ -21,15 +34,15 @@ g = Github(you_know_what)
 repo = g.get_repo(REPO_NAME)
 
 # Read the content of the file
-with open(f'/{original_path}', 'rb') as file:
+with open(f'/{image_original}', 'rb') as file:
     content_orig = file.read()
     
-with open(f'/{LOCAL_FILE_PATH}', 'rb') as file:
-    content = file.read()
+with open(f'/{image_scaled}', 'rb') as file:
+    content_scaled = file.read()
 
 # Upload the file to the repository
-repo.create_file(REPO_FILE_PATH_ORIGINAL, COMMIT_MESSAGE, content_orig, branch="main")
-repo.create_file(REPO_FILE_PATH, COMMIT_MESSAGE, content, branch="main")
+repo.create_file(repo_path_original, commit_message, content_orig, branch="main")
+repo.create_file(repo_path_scaled, commit_message, content_scaled, branch="main")
 
 print()
-print(f"{NOTE_NAME_EXT} has been uploaded to {REPO_NAME} at {REPO_FILE_PATH}")
+print(f"{note_name}.{note_ext} has been uploaded to {REPO_NAME} at Notes/{note_name}")
