@@ -9,14 +9,14 @@ def preprocess_image_for_ocr(image_path):
     gray_image = color.rgb2gray(image)
     
     # Apply Gaussian filter to reduce noise
-    blurred_image = filters.gaussian(gray_image, sigma=1.0)
+    blurred_image = filters.gaussian(gray_image, sigma=.2)
     
     # Enhance contrast using adaptive histogram equalization
-    enhanced_image = exposure.equalize_adapthist(blurred_image, clip_limit=0.03)
+    enhanced_image = blurred_image # exposure.equalize_adapthist(blurred_image, clip_limit=0.03)
     
     # Further improve contrast by stretching the intensity values
     # Stretch the intensity values to cover the full range (0-1)
-    contrast_stretched_image = exposure.rescale_intensity(enhanced_image, in_range=(0, 1), out_range=(0, 1))
+    contrast_stretched_image = enhanced_image # exposure.rescale_intensity(enhanced_image, in_range=(0, 1), out_range=(0, 1))
     
     # Convert the image to 8-bit unsigned integer type
     contrast_stretched_image = img_as_ubyte(contrast_stretched_image)

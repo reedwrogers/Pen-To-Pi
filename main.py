@@ -1,6 +1,7 @@
 from github import Github
 from photo import *
 from scale import *
+from words import *
 import os
 
 # Get the image we are sending the repo
@@ -8,7 +9,7 @@ image_original = grab_photo()
 image_scaled = scale(image_original)
 
 # Replace these variables with your own information
-you_know_what = 'example'
+you_know_what = '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'
 REPO_NAME = 'reedwrogers/Pen-To-Pi'
 
 # Remove the / at the start of the file because GitHub won't take it
@@ -16,6 +17,9 @@ if image_original.startswith('/'):
     image_original = image_original[1:]
 if image_scaled.startswith('/'):
     image_scaled = image_scaled[1:]
+
+words = get_words(image_scaled)
+print(words)
 
 # Extract the name and extension to use
 note_name_with_extension = os.path.basename(image_original)
