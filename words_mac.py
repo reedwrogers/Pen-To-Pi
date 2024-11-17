@@ -24,10 +24,12 @@ def getTextFromVisionResponse(response):
 
     return ''.join(texts)
 
+def get_words(path):
+    handwritings = cv2.imread(path)
+
+    response = CloudVisionTextExtractor(handwritings)
+    text = getTextFromVisionResponse(response)
+    return text
+
 image_path = '/Users/reed/Desktop/Personal-Projects/Pen-To-Pi/Notes/20241114_012415/20241114_012415_scaled.jpg'
-handwritings = cv2.imread(image_path)
-
-response = CloudVisionTextExtractor(handwritings)
-text = getTextFromVisionResponse(response)
-
-print(text)
+print(get_words(image_path))
