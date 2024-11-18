@@ -18,8 +18,10 @@ if image_original.startswith('/'):
 if image_scaled.startswith('/'):
     image_scaled = image_scaled[1:]
 
-words = get_words(image_scaled)
+words, title = get_words(image_scaled)
 print(words)
+print()
+print(title)
 
 # Extract the name and extension to use
 note_name_with_extension = os.path.basename(image_original)
