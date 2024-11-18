@@ -2,7 +2,7 @@ import os
 import cv2
 from google.cloud import vision
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/reed/Downloads/pen-to-pi-26fd4089263a.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/reedwr/Downloads/pen-to-pi-26fd4089263a.json"
 
 def CloudVisionTextExtractor(handwritings):
     # Convert image from numpy to bytes for submission to Google Cloud Vision
