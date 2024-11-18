@@ -9,7 +9,7 @@ image_original = grab_photo()
 image_scaled = scale(image_original)
 
 # Replace these variables with your own information
-you_know_what = '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'
+you_know_what = 'pwd'
 REPO_NAME = 'reedwrogers/Pen-To-Pi'
 
 # Remove the / at the start of the file because GitHub won't take it
