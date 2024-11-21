@@ -14,7 +14,6 @@ def preprocess_image_for_ocr(image_path):
     # Enhance contrast using adaptive histogram equalization
     enhanced_image = blurred_image # exposure.equalize_adapthist(blurred_image, clip_limit=0.03)
     
-    # Further improve contrast by stretching the intensity values
     # Stretch the intensity values to cover the full range (0-1)
     contrast_stretched_image = enhanced_image # exposure.rescale_intensity(enhanced_image, in_range=(0, 1), out_range=(0, 1))
     

@@ -48,7 +48,6 @@ def scale(image_path):
         skimage.io.imsave(scaled_output_path, cropped_result)
         skimage.io.imsave(f"/home/reedwr/Pictures/Notes/{scaled_file_name}_scaled_before_proc.{scaled_file_extension}", cropped_result)
 
-
         # Preprocess the image for OCR
         processed_image = preprocess_image_for_ocr(scaled_output_path)
 
