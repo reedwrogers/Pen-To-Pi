@@ -4,7 +4,7 @@ one
 two
 Seven
 FIVE
-FOUR
 three
+FOUR
 Six
-nineIllinoiseightonetwoSevenFIVEFOURthreeSixnine
+nineIllinoiseightonetwoSevenFIVEthreeFOURSixnine
